@@ -124,7 +124,7 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">
-            BlogSphereA
+            TechTonicBytes
           </span>
         </Link>
 
