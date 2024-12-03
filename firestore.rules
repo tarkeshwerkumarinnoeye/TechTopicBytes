@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to read posts and comments
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if true;  // In production, you'd want to restrict this
+    }
+    
+    match /comments/{commentId} {
+      allow read: if true;
+      allow write: if true;  // In production, you'd want to restrict this
+      
+      // Optional: Add validation rules
+      match /likes/{userId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+
+    // Allow authenticated users to read admin users
+    match /adminusers/{document} {
+      allow read: if request.auth != null;
+    }
+  }
+}

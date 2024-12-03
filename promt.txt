@@ -1,0 +1,15 @@
+A modern personal blogging platform that prioritizes content creation and reader engagement.
+
+Core Features:
+- Homepage with grid-based post previews
+- Rich text editor with markdown support and image handling
+- Individual post pages with unique URLs
+- Comment system for reader engagement
+- Social media sharing capabilities
+- Admin dashboard for content management (create/edit/delete posts)
+
+Style:
+- Minimalist design with plenty of whitespace
+- Typography-focused layout that emphasizes readability
+- Subtle hover animations and micro-interactions that guide user attention
+- Muted color palette with one accent color for important actions
