@@ -12,7 +12,6 @@ import {
   Trash2, 
   Plus, 
   ChevronRight, 
-  ChevronLeft, 
   Search, 
   Filter 
 } from 'lucide-react';
@@ -24,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -216,84 +215,118 @@ const ManagePosts: React.FC<ManagePostsProps> = ({ user, setActiveTab }) => {
         </DropdownMenu>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Categories</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <AnimatePresence mode="popLayout">
-                {filteredPosts.map((post) => (
-                  <motion.tr
-                    key={post.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="group"
-                  >
-                    <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        {post.categories?.map((category, index) => (
-                          <Badge key={index} variant="secondary">
-                            {category}
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {post.createdAt?.toDate ? format(post.createdAt.toDate(), 'MMM d, yyyy') : 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {post.updatedAt?.toDate ? format(post.updatedAt.toDate(), 'MMM d, yyyy') : 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setActiveTab('write-post');
-                            navigate(`/admin?tab=write-post&edit=${post.id}`);
-                          }}
-                          className="flex items-center gap-1 hover:bg-slate-100"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white rounded-xl shadow-lg"
+      >
+        <Table>
+          <TableHeader className="bg-gradient-to-r from-indigo-50 to-blue-50">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="text-indigo-700 font-semibold">Title</TableHead>
+              <TableHead className="text-indigo-700 font-semibold">Categories</TableHead>
+              <TableHead className="text-indigo-700 font-semibold">Created</TableHead>
+              <TableHead className="text-indigo-700 font-semibold">Updated</TableHead>
+              <TableHead className="text-right text-indigo-700 font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <AnimatePresence mode="popLayout">
+              {filteredPosts.map((post, index) => (
+                <motion.tr
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className={`
+                    group 
+                    transition-all 
+                    duration-300 
+                    ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}
+                    hover:bg-indigo-50/80 
+                    hover:shadow-sm
+                  `}
+                >
+                  <TableCell className="font-medium text-slate-800 group-hover:text-indigo-800 transition-colors">
+                    {post.title}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      {post.categories?.map((category, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary" 
+                          className="
+                            bg-slate-100 
+                            text-slate-700 
+                            hover:bg-indigo-100 
+                            hover:text-indigo-800 
+                            transition-colors
+                          "
                         >
-                          <Edit2 size={14} />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(post.id)}
-                          className="flex items-center gap-1 hover:bg-red-100 hover:text-red-600"
-                        >
-                          <Trash2 size={14} />
-                          Delete
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                          {category}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-slate-600 group-hover:text-indigo-700 transition-colors">
+                    {post.createdAt?.toDate ? format(post.createdAt.toDate(), 'MMM d, yyyy') : 'N/A'}
+                  </TableCell>
+                  <TableCell className="text-slate-600 group-hover:text-indigo-700 transition-colors">
+                    {post.updatedAt?.toDate ? format(post.updatedAt.toDate(), 'MMM d, yyyy') : 'N/A'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setActiveTab('write-post');
+                          navigate(`/admin?tab=write-post&edit=${post.id}`);
+                        }}
+                        className="
+                          flex items-center gap-1 
+                          hover:bg-indigo-100 
+                          text-slate-600 
+                          hover:text-indigo-800 
+                          transition-colors
+                        "
+                      >
+                        <Edit2 size={14} />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(post.id)}
+                        className="
+                          flex items-center gap-1 
+                          hover:bg-red-100 
+                          hover:text-red-600 
+                          text-slate-600 
+                          transition-colors
+                        "
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </motion.tr>
+              ))}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
+      </motion.div>
 
       {hasMore && filteredPosts.length === posts.length && (
         <div className="flex justify-center mt-4">
           <Button
             variant="outline"
             onClick={() => fetchPosts(lastVisible)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-slate-100"
           >
             Load More
             <ChevronRight size={16} />
