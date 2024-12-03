@@ -11,7 +11,8 @@ import {
   PenTool, 
   ChevronLeft, 
   ChevronRight,
-  LogOut
+  LogOut,
+  Home
 } from 'lucide-react';
 
 // Import components
@@ -19,6 +20,7 @@ import Dashboard from './Dashboard';
 import ManagePosts from './ManagePosts';
 import WritePost from './WritePost';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 // Sidebar Component
 const AdminSidebar = ({ 
@@ -158,9 +160,17 @@ const AdminDashboard = () => {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">
-            {activeTab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-          </h1>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-slate-900">
+              {activeTab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+            </h1>
+            <Link to="/">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Home size={16} />
+                Home
+              </Button>
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-slate-600">
               Welcome, {user?.displayName}
