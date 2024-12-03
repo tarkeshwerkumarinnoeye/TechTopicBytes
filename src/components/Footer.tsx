@@ -8,7 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">TechTonicBytes</h3>
+            <h3 className="text-2xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Tech</span>
+              <span className="text-[#e74c3c]">Tonic</span>
+              <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Bytes</span>
+            </h3>
             <p className="text-gray-400 mb-4">
               A modern blogging platform for sharing knowledge and connecting with like-minded individuals.
             </p>
@@ -60,7 +64,12 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>© 2024 TechTonicTypes. All rights reserved.</p>
+          <p>&copy; 2024 
+            <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Tech</span>
+            <span className="text-[#e74c3c]">Tonic</span>
+            <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Types</span>
+            . All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

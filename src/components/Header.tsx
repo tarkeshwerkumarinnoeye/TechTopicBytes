@@ -123,9 +123,11 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">
-            TechTonicBytes
-          </span>
+          <div className="text-2xl font-bold flex">
+            <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Tech</span>
+            <span className="text-[#e74c3c]">Tonic</span>
+            <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">Bytes</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
