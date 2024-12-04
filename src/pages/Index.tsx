@@ -9,16 +9,32 @@ import { useQuery } from "@tanstack/react-query";
 import { createSlug } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { categoriesApi } from "@/lib/api/categories-api";
 
 export const addPost = async (post: Partial<Post>) => {
   return await postApi.createPost(post);
 };
 
+const defaultIcons: { [key: string]: string } = {
+  "Technology": "💻",
+  "Programming": "👨‍💻",
+  "AI & ML": "🤖",
+  "Web Development": "🌐",
+  "Design": "🎨",
+  "Data Science": "📊"
+};
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: posts = [], isLoading } = useQuery({
+  
+  const { data: posts = [], isLoading: isPostsLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: () => postApi.getPosts(),
+  });
+
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoriesApi.getCategories(),
   });
 
   const getPostUrl = (post: Post) => {
@@ -26,17 +42,15 @@ const Index = () => {
     return `/post/${titleSlug}-${post.id}`;
   };
 
-  const categories = [
-    { name: "Technology", icon: "💻", count: 12 },
-    { name: "Programming", icon: "👨‍💻", count: 8 },
-    { name: "AI & ML", icon: "🤖", count: 6 },
-    { name: "Web Development", icon: "🌐", count: 10 },
-  ];
+  // Sort categories by post count and take top 4
+  const topCategories = categories
+    .sort((a, b) => (b.postCount || 0) - (a.postCount || 0))
+    .slice(0, 4);
 
   const featuredPosts = posts.slice(0, 3);
   const recentPosts = posts.slice(3);
 
-  if (isLoading) {
+  if (isPostsLoading || isCategoriesLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <Header />
@@ -81,17 +95,20 @@ const Index = () => {
         <div className="container px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Popular Categories</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <div
-                key={category.name}
-                className="group p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer"
+            {topCategories.map((category) => (
+              <Link
+                key={category.id}
+                to={`/category/${category.name}`}
+                className="group p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all text-center"
               >
                 <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform">
-                  {category.icon}
+                  {category.icon || defaultIcons[category.name] || "📚"}
                 </div>
                 <h3 className="font-semibold mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-500">{category.count} articles</p>
-              </div>
+                <p className="text-sm text-gray-500">
+                  {category.postCount || 0} articles
+                </p>
+              </Link>
             ))}
           </div>
         </div>
