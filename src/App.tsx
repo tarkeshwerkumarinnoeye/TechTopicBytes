@@ -9,6 +9,7 @@ import NewPost from "./pages/NewPost";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminIndex from "./pages/admin/Index";
+import Categories from "./pages/Categories";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <ReactRoutes>
             <Route path="/" element={<Index />} />
             <Route path="/post/:slug" element={<Post />} />
+            <Route path="/categories" element={<Categories />} />
             <Route path="/admin" element={<AdminIndex />}>
               <Route path="write-post" element={<AdminIndex />} />
             </Route>
