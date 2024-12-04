@@ -69,7 +69,7 @@ const Categories = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {categories && categories.map((category) => (
               <Link
-                to={`/category/${category.id}`}
+                to={`/category/${category.name}`}
                 key={category.id}
                 className="group p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer"
               >

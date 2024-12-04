@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminIndex from "./pages/admin/Index";
 import Categories from "./pages/Categories";
+import CategoryPosts from "./pages/CategoryPosts";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/post/:slug" element={<Post />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/category/:categoryName" element={<CategoryPosts />} />
             <Route path="/admin" element={<AdminIndex />}>
               <Route path="write-post" element={<AdminIndex />} />
             </Route>

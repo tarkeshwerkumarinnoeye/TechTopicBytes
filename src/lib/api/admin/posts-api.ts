@@ -10,7 +10,8 @@ import {
   limit,
   startAfter,
   getDoc,
-  serverTimestamp
+  serverTimestamp,
+  where
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Post } from "@/types/Post";
@@ -177,5 +178,50 @@ export const adminPostsApi = {
       console.error("Error getting post:", error);
       throw error;
     }
-  }
+  },
+
+  getPostsByCategory: async (categoryName: string, lastVisible: any = null, pageSize = 10) => {
+    try {
+      const postsRef = collection(db, "posts");
+      let q;
+
+      // Create a query that filters posts by the specific category
+      if (lastVisible) {
+        q = query(
+          postsRef,
+          where('categories', 'array-contains', categoryName),
+          limit(pageSize)
+        );
+      } else {
+        q = query(
+          postsRef,
+          where('categories', 'array-contains', categoryName),
+          limit(pageSize)
+        );
+      }
+
+      const snapshot = await getDocs(q);
+      const posts = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      } as Post))
+      // Sort in memory if needed
+      .sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+
+      return {
+        posts,
+        lastVisible: lastDoc,
+        hasMore: posts.length === pageSize
+      };
+    } catch (error) {
+      console.error("Error fetching posts by category:", error);
+      throw error;
+    }
+  },
 };

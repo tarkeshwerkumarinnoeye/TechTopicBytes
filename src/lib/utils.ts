@@ -5,9 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function createSlug(title: string) {
+export function createSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove non-word chars (except spaces and hyphens)
+    .replace(/[\s_-]+/g, '-')  // Replace spaces, underscores, hyphens with single hyphen
+    .replace(/^-+|-+$/g, '');  // Remove leading/trailing hyphens
 }
