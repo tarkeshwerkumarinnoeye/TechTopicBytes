@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { adminPostsApi } from "@/lib/api";
+import { categoriesApi } from "@/lib/api/categories-api";
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Save, X } from 'lucide-react';
+import { Eye, EyeOff, Save, X, Plus } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 interface WritePostProps {
   user: any;
@@ -20,6 +23,11 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
   const [searchParams] = useSearchParams();
   const editPostId = searchParams.get('edit');
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoriesApi.getCategories(),
+  });
 
   const [postForm, setPostForm] = useState({
     title: '',
@@ -66,11 +74,28 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
     }));
   };
 
-  const handleArrayInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'categories' | 'tags') => {
+  const handleCategoryChange = (categoryId: string) => {
+    const category = categories.find(c => c.id === categoryId);
+    if (category) {
+      setPostForm(prev => ({
+        ...prev,
+        categories: [...prev.categories, category.name]
+      }));
+    }
+  };
+
+  const removeCategory = (categoryToRemove: string) => {
+    setPostForm(prev => ({
+      ...prev,
+      categories: prev.categories.filter(cat => cat !== categoryToRemove)
+    }));
+  };
+
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const values = e.target.value.split(',').map(item => item.trim());
     setPostForm(prev => ({
       ...prev,
-      [field]: values
+      tags: values
     }));
   };
 
@@ -153,12 +178,39 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">Categories</label>
-                <Input
-                  placeholder="Technology, Programming, Web Development..."
-                  value={postForm.categories.join(', ')}
-                  onChange={(e) => handleArrayInputChange(e, 'categories')}
-                  className="text-sm"
-                />
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {postForm.categories.map((category) => (
+                    <div
+                      key={category}
+                      className="flex items-center gap-1 bg-purple-100 text-purple-800 px-2 py-1 rounded-md"
+                    >
+                      <span className="text-sm">{category}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeCategory(category)}
+                        className="text-purple-600 hover:text-purple-800"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <Select onValueChange={handleCategoryChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Add a category..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        value={category.id}
+                        disabled={postForm.categories.includes(category.name)}
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -166,7 +218,7 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
                 <Input
                   placeholder="react, typescript, web..."
                   value={postForm.tags.join(', ')}
-                  onChange={(e) => handleArrayInputChange(e, 'tags')}
+                  onChange={handleTagsChange}
                   className="text-sm"
                 />
               </div>
@@ -206,30 +258,20 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
                     value={postForm.content}
                     onChange={handleInputChange}
                     required
-                    className="min-h-[400px] font-mono text-sm"
+                    className="min-h-[400px] font-mono"
                   />
                 )}
               </div>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className="flex justify-end gap-4">
               <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/admin')}
+                type="submit"
                 className="flex items-center gap-2"
                 disabled={isLoading}
-              >
-                <X size={16} />
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-                className="flex items-center gap-2"
               >
                 <Save size={16} />
-                {editPostId ? 'Update Post' : 'Create Post'}
+                {editPostId ? 'Update Post' : 'Publish Post'}
               </Button>
             </div>
           </form>
