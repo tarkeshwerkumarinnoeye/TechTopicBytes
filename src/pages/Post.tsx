@@ -10,18 +10,21 @@ import { useQuery } from "@tanstack/react-query";
 import CommentSection from "@/components/CommentSection";
 
 const Post = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   
+  // Extract post ID from slug (last part after the last hyphen)
+  const postId = slug?.split('-').pop() || '';
+  
   const { data: post, isLoading: isLoadingPost } = useQuery({
-    queryKey: ["post", id],
-    queryFn: () => postApi.getPost(id!),
+    queryKey: ["post", postId],
+    queryFn: () => postApi.getPost(postId),
   });
 
   const { data: comments = [], isLoading: isLoadingComments } = useQuery({
-    queryKey: ["comments", id],
-    queryFn: () => commentApi.getComments(id!),
-    enabled: !!id,
+    queryKey: ["comments", postId],
+    queryFn: () => commentApi.getComments(postId),
+    enabled: !!postId,
   });
 
   if (isLoadingPost || isLoadingComments) {
@@ -76,7 +79,7 @@ const Post = () => {
               </Button>
             </div>
 
-            <CommentSection postId={id!} comments={comments} />
+            <CommentSection postId={postId} comments={comments} />
           </div>
         </article>
       </main>

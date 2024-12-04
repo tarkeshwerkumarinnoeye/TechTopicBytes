@@ -20,7 +20,7 @@ const App = () => (
         <BrowserRouter>
           <ReactRoutes>
             <Route path="/" element={<Index />} />
-            <Route path="/post/:id" element={<Post />} />
+            <Route path="/post/:slug" element={<Post />} />
             <Route path="/admin" element={<AdminIndex />}>
               <Route path="write-post" element={<AdminIndex />} />
             </Route>

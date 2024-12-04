@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CalendarDays, Clock, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { createSlug } from "@/lib/utils";
 
 export const addPost = async (post: Partial<Post>) => {
   return await postApi.createPost(post);
@@ -16,6 +17,11 @@ const Index = () => {
     queryKey: ["posts"],
     queryFn: () => postApi.getPosts(),
   });
+
+  const getPostUrl = (post: Post) => {
+    const titleSlug = createSlug(post.title);
+    return `/post/${titleSlug}-${post.id}`;
+  };
 
   if (isLoading) {
     return (
@@ -51,7 +57,7 @@ const Index = () => {
                   </div>
                   <h2 className="text-2xl font-bold mb-2">
                     <Link
-                      to={`/post/${post.id}`}
+                      to={getPostUrl(post)}
                       className="text-gray-900 hover:text-purple-600 transition-colors"
                     >
                       {post.title}
@@ -59,7 +65,7 @@ const Index = () => {
                   </h2>
                   <p className="text-gray-600 mb-4">{post.excerpt}</p>
                   <Link
-                    to={`/post/${post.id}`}
+                    to={getPostUrl(post)}
                     className="inline-flex items-center text-purple-600 hover:text-purple-700"
                   >
                     Read more
