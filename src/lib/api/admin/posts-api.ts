@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Post } from "@/types/Post";
+import { categoriesApi } from "../categories-api";
 
 export const adminPostsApi = {
   createPost: async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -87,8 +88,32 @@ export const adminPostsApi = {
 
   deletePost: async (postId: string) => {
     try {
+      // First get the post to get its categories
       const postRef = doc(db, 'posts', postId);
+      const postDoc = await getDoc(postRef);
+      
+      if (!postDoc.exists()) {
+        throw new Error('Post not found');
+      }
+
+      const post = postDoc.data();
+      const categories = post.categories || [];
+
+      // Delete the post
       await deleteDoc(postRef);
+
+      // Decrement category counts
+      for (const categoryName of categories) {
+        try {
+          const categoryId = await categoriesApi.getCategoryIdByName(categoryName);
+          if (categoryId) {
+            await categoriesApi.decrementPostCount(categoryId);
+          }
+        } catch (error) {
+          console.error(`Error decrementing count for category ${categoryName}:`, error);
+          // Continue with other categories even if one fails
+        }
+      }
     } catch (error) {
       console.error('Error deleting post:', error);
       throw error;

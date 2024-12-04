@@ -104,6 +104,14 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
     setIsLoading(true);
     
     try {
+      // Get the original categories if editing
+      let originalCategories: string[] = [];
+      if (editPostId) {
+        const post = await adminPostsApi.getPost(editPostId);
+        originalCategories = post.categories || [];
+      }
+
+      // Update post
       if (editPostId) {
         await adminPostsApi.updatePost(editPostId, {
           title: postForm.title,
@@ -113,11 +121,33 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
           userId: user.uid,
           published: true
         });
+
+        // Handle category count updates for edited post
+        const removedCategories = originalCategories.filter(cat => !postForm.categories.includes(cat));
+        const addedCategories = postForm.categories.filter(cat => !originalCategories.includes(cat));
+
+        // Decrement count for removed categories
+        for (const categoryName of removedCategories) {
+          const categoryId = await categoriesApi.getCategoryIdByName(categoryName);
+          if (categoryId) {
+            await categoriesApi.decrementPostCount(categoryId);
+          }
+        }
+
+        // Increment count for added categories
+        for (const categoryName of addedCategories) {
+          const categoryId = await categoriesApi.getCategoryIdByName(categoryName);
+          if (categoryId) {
+            await categoriesApi.incrementPostCount(categoryId);
+          }
+        }
+
         toast({
           title: "Success",
           description: "Post updated successfully"
         });
       } else {
+        // Create new post
         await adminPostsApi.createPost({
           ...postForm,
           userId: user.uid,
@@ -125,6 +155,15 @@ const WritePost: React.FC<WritePostProps> = ({ user, onPostCreated }) => {
           views: 0,
           likes: 0
         });
+
+        // Increment count for all categories in new post
+        for (const categoryName of postForm.categories) {
+          const categoryId = await categoriesApi.getCategoryIdByName(categoryName);
+          if (categoryId) {
+            await categoriesApi.incrementPostCount(categoryId);
+          }
+        }
+
         toast({
           title: "Success",
           description: "Post created successfully"
